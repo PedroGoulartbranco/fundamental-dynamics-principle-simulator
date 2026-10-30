@@ -46,7 +46,7 @@ carro_2 = Carro(posicao_x=790, posicao_y=500, massa=massa_2, cor="#f34949", lado
 grupo_carros.add(carro_1)
 grupo_carros.add(carro_2)
 
-forca_elastico = 15
+forca_elastico = 1
 
 pygame.init()
 tela = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA))
@@ -71,21 +71,21 @@ while rodando:
             if evento.key == pygame.K_SPACE:
                 if comecou_simulacao is False and simulacao_ocorreu is False:
                     comecou_simulacao =  not comecou_simulacao
-                    for carro in grupo_carros:
-                        carro.calcular_acelaracao(forca_elastico)
-                        inicio_simulacao = time.perf_counter()
+                    inicio_simulacao = time.perf_counter()
                 print(comecou_simulacao)
     tela.fill("black")
+    for carro in grupo_carros:
+        carro.calcular_acelaracao(forca_elastico)
 
     texto_lateral = [
         f"Tempo Duração: {tempo_decorrido:.2f}s",
-        f"Massa 1: {carro_1.massa}",
-        f"Massa 2: {carro_2.massa}",
-        f"Força Aplicada: {forca_elastico}",
-        f"Aceleração 1: {carro_1.acelaracao}",
-        f"Aceleração 2: {carro_2.acelaracao}",
-        f"Velocidade 1: {carro_1.velocidade}",
-        f"Velocidade 2: {carro_2.velocidade}"
+        f"Massa 1: {carro_1.massa:.2f}",
+        f"Massa 2: {carro_2.massa:.2f}",
+        f"Força Aplicada: {forca_elastico:.2f}",
+        f"Aceleração 1: {carro_1.acelaracao:.2f}",
+        f"Aceleração 2: {carro_2.acelaracao:.2f}",
+        f"Velocidade 1: {carro_1.velocidade:.2f}",
+        f"Velocidade 2: {carro_2.velocidade:.2f}"
     ]
 
     for i, linha in enumerate(texto_lateral):
