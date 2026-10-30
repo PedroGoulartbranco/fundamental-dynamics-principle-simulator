@@ -52,7 +52,7 @@ ALTURA_TELA = 600
 grupo_carros = pygame.sprite.Group()
 
 massa_1 = 40
-massa_2 = 30
+massa_2 = 40
 
 carro_1 = Carro(posicao_x=150, posicao_y=500, massa=massa_1, cor="#5c9feb", lado="esquerdo")
 carro_2 = Carro(posicao_x=790, posicao_y=500, massa=massa_2, cor="#f34949", lado="direito")
@@ -164,12 +164,14 @@ while rodando:
         if teclas[pygame.K_UP]:
             carro_2.massa += 1
         if teclas[pygame.K_DOWN]:
-            carro_2.massa -= 1
+            if carro_2.massa > 1:
+                carro_2.massa -= 1
     else:
         if teclas[pygame.K_UP]:
             carro_1.massa += 1
         if teclas[pygame.K_DOWN]:
-            carro_1.massa -= 1
+            if carro_1.massa > 1:
+                carro_1.massa -= 1
 
     pygame.display.flip()
 
