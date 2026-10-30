@@ -1,4 +1,5 @@
 import pygame
+import time
 
 class Carro(pygame.sprite.Sprite):
     def __init__(self, posicao_x, posicao_y, massa, cor, lado):
@@ -54,6 +55,7 @@ clock = pygame.time.Clock()
 rodando= True
 
 comecou_simulacao = False
+inicio_simulacao = fim_simulacao = tempo_decorrido = 0
 
 while rodando:
     for evento in pygame.event.get():
@@ -65,6 +67,7 @@ while rodando:
                     comecou_simulacao =  not comecou_simulacao
                     for carro in grupo_carros:
                         carro.calcular_acelaracao(forca_elastico)
+                        inicio_simulacao = time.perf_counter()
                 print(comecou_simulacao)
     tela.fill("black")
     pygame.draw.rect(tela, "white", (0, 535, 1000, 10))
@@ -74,7 +77,10 @@ while rodando:
     if comecou_simulacao:
         grupo_carros.update()
         if carro_1.rect.colliderect(carro_2.rect):
+            fim_simulacao = time.perf_counter()
             comecou_simulacao = False
+            tempo_decorrido = fim_simulacao - inicio_simulacao
+            print(tempo_decorrido)
             carro_1.reiniciar()
             carro_2.reiniciar()
 
