@@ -27,14 +27,20 @@ class Carro(pygame.sprite.Sprite):
         self.x += self.velocidade
 
         self.rect.x = self.x
+    def reiniciar(self):
+        self.velocidade = 0
+        self.acelaracao = 0
 
 LARGURA_TELA = 1000
 ALTURA_TELA = 600
 
 grupo_carros = pygame.sprite.Group()
 
-carro_1 = Carro(posicao_x=150, posicao_y=500, massa=30, cor="#5c9feb", lado="esquerdo")
-carro_2 = Carro(posicao_x=790, posicao_y=500, massa=30, cor="#f34949", lado="direito")
+massa_1 = 30
+massa_2 = 30
+
+carro_1 = Carro(posicao_x=150, posicao_y=500, massa=massa_1, cor="#5c9feb", lado="esquerdo")
+carro_2 = Carro(posicao_x=790, posicao_y=500, massa=massa_2, cor="#f34949", lado="direito")
 
 grupo_carros.add(carro_1)
 grupo_carros.add(carro_2)
@@ -63,8 +69,27 @@ while rodando:
     tela.fill("black")
     pygame.draw.rect(tela, "white", (0, 535, 1000, 10))
 
-    grupo_carros.update()
     grupo_carros.draw(tela)
+
+    if comecou_simulacao:
+        grupo_carros.update()
+        if carro_1.rect.colliderect(carro_2.rect):
+            comecou_simulacao = False
+            carro_1.reiniciar()
+            carro_2.reiniciar()
+
+            sobreposicao = carro_1.rect.right - carro_2.rect.left
+
+            massa_total = carro_1.massa + carro_2.massa
+
+            proporcao_1 = carro_2.massa / massa_total
+            proporcao_2 = carro_1.massa / massa_total
+
+            carro_1.rect.x -= sobreposicao * proporcao_1
+            carro_1.x = carro_1.rect.x
+
+            carro_2.rect.x += sobreposicao * proporcao_2
+            carro_2.x = carro_2.rect.x
 
     pygame.display.flip()
 
