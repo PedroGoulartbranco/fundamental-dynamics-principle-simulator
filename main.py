@@ -52,10 +52,16 @@ pygame.init()
 tela = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA))
 pygame.display.set_caption("Simulador Principio Fundamental da Dinamica")
 clock = pygame.time.Clock()
+fonte_lateral = pygame.font.SysFont("arial", 20)
 rodando= True
 
 comecou_simulacao = False
 inicio_simulacao = fim_simulacao = tempo_decorrido = 0
+simulacao_ocorreu = False
+
+x_coluna_texto = 20
+y_espacamento = 45
+y_texto_inicial = 20
 
 while rodando:
     for evento in pygame.event.get():
@@ -63,22 +69,41 @@ while rodando:
             rodando = False
         if evento.type == pygame.KEYDOWN:
             if evento.key == pygame.K_SPACE:
-                if comecou_simulacao is False:
+                if comecou_simulacao is False and simulacao_ocorreu is False:
                     comecou_simulacao =  not comecou_simulacao
                     for carro in grupo_carros:
                         carro.calcular_acelaracao(forca_elastico)
                         inicio_simulacao = time.perf_counter()
                 print(comecou_simulacao)
     tela.fill("black")
+
+    texto_lateral = [
+        f"Tempo Duração: {tempo_decorrido:.2f}s",
+        f"Massa 1: {carro_1.massa}",
+        f"Massa 2: {carro_2.massa}",
+        f"Força Aplicada: {forca_elastico}",
+        f"Aceleração 1: {carro_1.acelaracao}",
+        f"Aceleração 2: {carro_2.acelaracao}",
+        f"Velocidade 1: {carro_1.velocidade}",
+        f"Velocidade 2: {carro_2.velocidade}"
+    ]
+
+    for i, linha in enumerate(texto_lateral):
+        texto_surf = fonte_lateral.render(linha, True, (255, 255, 255))
+        texto_rect = texto_surf.get_rect(x=x_coluna_texto, y=y_texto_inicial+ (i * y_espacamento))
+        tela.blit(texto_surf, texto_rect)
+
     pygame.draw.rect(tela, "white", (0, 535, 1000, 10))
 
     grupo_carros.draw(tela)
 
     if comecou_simulacao:
         grupo_carros.update()
+        tempo_decorrido = time.perf_counter() - inicio_simulacao
         if carro_1.rect.colliderect(carro_2.rect):
             fim_simulacao = time.perf_counter()
             comecou_simulacao = False
+            simulacao_ocorreu = True
             tempo_decorrido = fim_simulacao - inicio_simulacao
             print(tempo_decorrido)
             carro_1.reiniciar()
