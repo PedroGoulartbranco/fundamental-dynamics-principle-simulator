@@ -78,6 +78,12 @@ x_coluna_texto = 20
 y_espacamento = 45
 y_texto_inicial = 20
 
+numero_carro_1_surface = fonte_lateral.render("1", True, "#070707")
+rect_numero_1_carro = numero_carro_1_surface.get_rect()
+
+numero_carro_2_surface = fonte_lateral.render("2", True, "#070707")
+rect_numero_2_carro = numero_carro_1_surface.get_rect()
+
 while rodando:
     for evento in pygame.event.get():
         if evento.type == pygame.QUIT:
@@ -132,6 +138,12 @@ while rodando:
     pygame.draw.rect(tela, "white", (0, 535, 1000, 10))
 
     grupo_carros.draw(tela)
+
+    rect_numero_1_carro.center = carro_1.rect.center
+    rect_numero_2_carro.center = carro_2.rect.center
+    
+    tela.blit(numero_carro_1_surface, rect_numero_1_carro)
+    tela.blit(numero_carro_2_surface, rect_numero_2_carro)
 
     if comecou_simulacao:
         grupo_carros.update()
