@@ -6,6 +6,10 @@ class Carro(pygame.sprite.Sprite):
         super().__init__()
         self.x = posicao_x
         self.y = posicao_y
+
+        self.posicao_inicial_x = posicao_x
+        self.posicao_inicial_y = posicao_y
+
         self.massa = massa
         self.velocidade = 0
         self.acelaracao = 0
@@ -18,6 +22,9 @@ class Carro(pygame.sprite.Sprite):
         self.image = pygame.Surface((self.comprimento, self.altura))
         self.image.fill(cor)
         self.rect = self.image.get_rect(topleft=(self.x, self.y))
+
+        self.velocidade_final = 0
+
     def calcular_acelaracao(self, forca):
         self.acelaracao = forca / self.massa
     def update(self):
@@ -29,15 +36,22 @@ class Carro(pygame.sprite.Sprite):
 
         self.rect.x = self.x
     def reiniciar(self):
+        self.velocidade_final = self.velocidade
         self.velocidade = 0
         self.acelaracao = 0
+    def realocar(self):
+        self.x = self.posicao_inicial_x
+        self.y = self.posicao_inicial_y
+
+        self.rect.x = self.x
+        self.rect.y = self.y
 
 LARGURA_TELA = 1000
 ALTURA_TELA = 600
 
 grupo_carros = pygame.sprite.Group()
 
-massa_1 = 30
+massa_1 = 40
 massa_2 = 30
 
 carro_1 = Carro(posicao_x=150, posicao_y=500, massa=massa_1, cor="#5c9feb", lado="esquerdo")
@@ -46,7 +60,7 @@ carro_2 = Carro(posicao_x=790, posicao_y=500, massa=massa_2, cor="#f34949", lado
 grupo_carros.add(carro_1)
 grupo_carros.add(carro_2)
 
-forca_elastico = 1
+forca_elastico = 10
 
 pygame.init()
 tela = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA))
@@ -72,16 +86,21 @@ while rodando:
                 if comecou_simulacao is False and simulacao_ocorreu is False:
                     comecou_simulacao =  not comecou_simulacao
                     inicio_simulacao = time.perf_counter()
-                print(comecou_simulacao)
+            elif evento.key == pygame.K_RETURN:
+                if simulacao_ocorreu:
+                    carro_1.realocar()
+                    carro_2.realocar()
+                    simulacao_ocorreu = False
+                    comecou_simulacao = False
     tela.fill("black")
     for carro in grupo_carros:
         carro.calcular_acelaracao(forca_elastico)
 
     texto_lateral = [
         f"Tempo Duração: {tempo_decorrido:.2f}s",
-        f"Massa 1: {carro_1.massa:.2f}",
-        f"Massa 2: {carro_2.massa:.2f}",
-        f"Força Aplicada: {forca_elastico:.2f}",
+        f"Massa 1: {carro_1.massa:.1f}Kg",
+        f"Massa 2: {carro_2.massa:.1f}Kg",
+        f"Força Aplicada: {forca_elastico:.1f}N",
         f"Aceleração 1: {carro_1.acelaracao:.2f}",
         f"Aceleração 2: {carro_2.acelaracao:.2f}",
         f"Velocidade 1: {carro_1.velocidade:.2f}",
@@ -92,6 +111,16 @@ while rodando:
         texto_surf = fonte_lateral.render(linha, True, (255, 255, 255))
         texto_rect = texto_surf.get_rect(x=x_coluna_texto, y=y_texto_inicial+ (i * y_espacamento))
         tela.blit(texto_surf, texto_rect)
+
+    if simulacao_ocorreu:
+        texto_lateral_final = [
+            f"Velocidade Final Carro 1: {carro_1.velocidade_final:.2f}",
+            f"Velocidade Final Carro 2: {carro_2.velocidade_final:.2f}"
+        ]
+        for i, linha in enumerate(texto_lateral_final):
+                texto_surf = fonte_lateral.render(linha, True, (255, 255, 255))
+                texto_rect = texto_surf.get_rect(x=700, y=y_texto_inicial+ (i * y_espacamento))
+                tela.blit(texto_surf, texto_rect)
 
     pygame.draw.rect(tela, "white", (0, 535, 1000, 10))
 
