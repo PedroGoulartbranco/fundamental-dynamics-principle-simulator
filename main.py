@@ -99,6 +99,7 @@ while rodando:
                     carro_2.realocar()
                     simulacao_ocorreu = False
                     comecou_simulacao = False
+                    tempo_decorrido = 0
             elif evento.key == pygame.K_LEFT:
                 if forca_elastico > 1:
                     forca_elastico -= 1
