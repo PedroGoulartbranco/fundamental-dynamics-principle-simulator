@@ -5,7 +5,7 @@ This project is an extra assignment developed for the **Experimental Physics 1**
 ## Preview
 
 <p align="center">
-  <img src="assets/foto.png" width="700" alt="Simulation Preview">
+  <img src="assets/FOTO2.png" width="700" alt="Simulation Preview">
 </p>
 
 ## Controls
@@ -18,7 +18,8 @@ This project is an extra assignment developed for the **Experimental Physics 1**
 | **Down Arrow** (`↓`) | Decrease Car 1 mass |
 | **Shift + Up Arrow** (`Shift + ↑`) | Increase Car 2 mass |
 | **Shift + Down Arrow** (`Shift + ↓`) | Decrease Car 2 mass |
-| **Spacebar** | Start / Reset simulation |
+| **Spacebar** (`Space`) | Start / Pause simulation |
+| **Enter** (`↵`) | Reset simulation |
 
 ## Requirements
 * Python 3.12

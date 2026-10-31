@@ -71,8 +71,10 @@ fonte_lateral = pygame.font.SysFont("arial", 20)
 rodando= True
 
 comecou_simulacao = False
-inicio_simulacao = fim_simulacao = tempo_decorrido = 0
+inicio_simulacao = fim_simulacao = tempo_decorrido = tempo_antes_pause = 0
 simulacao_ocorreu = False
+simulador_pausado = False
+inicio_tempo_pause = fim_tempo_pause = tempo_decorrido_pause = 0
 
 x_coluna_texto = 20
 y_espacamento = 45
@@ -93,6 +95,12 @@ while rodando:
                 if comecou_simulacao is False and simulacao_ocorreu is False:
                     comecou_simulacao =  not comecou_simulacao
                     inicio_simulacao = time.perf_counter()
+                elif comecou_simulacao is True and simulacao_ocorreu is False:
+                    simulador_pausado = not simulador_pausado
+                    if simulador_pausado:
+                        inicio_tempo_pause = time.perf_counter()
+                    else:
+                        tempo_decorrido_pause = time.perf_counter() - inicio_tempo_pause
             elif evento.key == pygame.K_RETURN:
                 if simulacao_ocorreu:
                     carro_1.realocar()
@@ -100,6 +108,7 @@ while rodando:
                     simulacao_ocorreu = False
                     comecou_simulacao = False
                     tempo_decorrido = 0
+                    tempo_decorrido_pause = 0
             elif evento.key == pygame.K_LEFT:
                 if forca_elastico > 1:
                     forca_elastico -= 1
@@ -112,11 +121,15 @@ while rodando:
 
     texto_lateral = [
         f"Tempo Duração: {tempo_decorrido:.2f}s",
+        f"Pause: {simulador_pausado}",
         f"Massa 1: {carro_1.massa:.1f}Kg",
         f"Massa 2: {carro_2.massa:.1f}Kg",
         f"Força Aplicada: {forca_elastico:.1f}N",
         f"Aceleração 1: {carro_1.acelaracao:.2f}",
         f"Aceleração 2: {carro_2.acelaracao:.2f}",
+    ]
+
+    texto_lateral_direito = [
         f"Velocidade 1: {carro_1.velocidade:.2f}",
         f"Velocidade 2: {carro_2.velocidade:.2f}"
     ]
@@ -127,14 +140,12 @@ while rodando:
         tela.blit(texto_surf, texto_rect)
 
     if simulacao_ocorreu:
-        texto_lateral_final = [
-            f"Velocidade Final Carro 1: {carro_1.velocidade_final:.2f}",
-            f"Velocidade Final Carro 2: {carro_2.velocidade_final:.2f}"
-        ]
-        for i, linha in enumerate(texto_lateral_final):
-                texto_surf = fonte_lateral.render(linha, True, (255, 255, 255))
-                texto_rect = texto_surf.get_rect(x=700, y=y_texto_inicial+ (i * y_espacamento))
-                tela.blit(texto_surf, texto_rect)
+        texto_lateral_direito.append(f"Velocidade Final 1: {carro_1.velocidade_final:.2f}")
+        texto_lateral_direito.append(f"Velocidade Final 2: {carro_2.velocidade_final:.2f}")
+    for i, linha in enumerate(texto_lateral_direito):
+        texto_surf = fonte_lateral.render(linha, True, (255, 255, 255))
+        texto_rect = texto_surf.get_rect(x=750, y=y_texto_inicial+ (i * y_espacamento))
+        tela.blit(texto_surf, texto_rect)
 
     pygame.draw.rect(tela, "white", (0, 535, 1000, 10))
 
@@ -147,29 +158,30 @@ while rodando:
     tela.blit(numero_carro_2_surface, rect_numero_2_carro)
 
     if comecou_simulacao:
-        grupo_carros.update()
-        tempo_decorrido = time.perf_counter() - inicio_simulacao
-        if carro_1.rect.colliderect(carro_2.rect):
-            fim_simulacao = time.perf_counter()
-            comecou_simulacao = False
-            simulacao_ocorreu = True
-            tempo_decorrido = fim_simulacao - inicio_simulacao
-            print(tempo_decorrido)
-            carro_1.reiniciar()
-            carro_2.reiniciar()
+        if simulador_pausado is False:
+            grupo_carros.update()
+            tempo_decorrido = time.perf_counter() - inicio_simulacao - tempo_decorrido_pause
+            if carro_1.rect.colliderect(carro_2.rect):
+                fim_simulacao = time.perf_counter()
+                comecou_simulacao = False
+                simulacao_ocorreu = True
+                #tempo_decorrido = fim_simulacao - inicio_simulacao
+                print(tempo_decorrido)
+                carro_1.reiniciar()
+                carro_2.reiniciar()
 
-            sobreposicao = carro_1.rect.right - carro_2.rect.left
+                sobreposicao = carro_1.rect.right - carro_2.rect.left
 
-            massa_total = carro_1.massa + carro_2.massa
+                massa_total = carro_1.massa + carro_2.massa
 
-            proporcao_1 = carro_2.massa / massa_total
-            proporcao_2 = carro_1.massa / massa_total
+                proporcao_1 = carro_2.massa / massa_total
+                proporcao_2 = carro_1.massa / massa_total
 
-            carro_1.rect.x -= sobreposicao * proporcao_1
-            carro_1.x = carro_1.rect.x
+                carro_1.rect.x -= sobreposicao * proporcao_1
+                carro_1.x = carro_1.rect.x
 
-            carro_2.rect.x += sobreposicao * proporcao_2
-            carro_2.x = carro_2.rect.x
+                carro_2.rect.x += sobreposicao * proporcao_2
+                carro_2.x = carro_2.rect.x
 
     teclas = pygame.key.get_pressed()
 
