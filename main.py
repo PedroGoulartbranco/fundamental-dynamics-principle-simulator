@@ -1,5 +1,6 @@
 import pygame
 import time
+import matplotlib.pyplot as plt
 
 class Carro(pygame.sprite.Sprite):
     def __init__(self, posicao_x, posicao_y, massa, cor, lado):
@@ -46,6 +47,20 @@ class Carro(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
+def gerar_grafico(lista_x, lista_y_1, lista_y_2, titulo, legenda_x, legenda_y):
+    plt.figure(figsize=(8, 5))
+    plt.plot(lista_x, lista_y_1, label="Carro 1", color="blue")
+    plt.plot(lista_x, lista_y_2, label="Carro 2", color="red")
+
+    plt.title(titulo)
+    plt.xlabel(legenda_x)
+    plt.ylabel(legenda_y)
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+    print("aqui")
+
 LARGURA_TELA = 1000
 ALTURA_TELA = 600
 
@@ -86,6 +101,13 @@ rect_numero_1_carro = numero_carro_1_surface.get_rect()
 numero_carro_2_surface = fonte_lateral.render("2", True, "#070707")
 rect_numero_2_carro = numero_carro_1_surface.get_rect()
 
+lista_tempo = []
+tempo_ultima_adicao_lista = 0
+intervalo_entre_adicoes_tempo = 0.1
+lista_velocidade_carro_1 = []
+lista_velocidade_carro_2 = []
+pode_gerar_grafico = False
+
 while rodando:
     for evento in pygame.event.get():
         if evento.type == pygame.QUIT:
@@ -109,11 +131,30 @@ while rodando:
                     comecou_simulacao = False
                     tempo_decorrido = 0
                     tempo_decorrido_pause = 0
+
+                    lista_velocidade_carro_1 = []
+                    lista_velocidade_carro_2 = []
+                    lista_tempo = []
+
             elif evento.key == pygame.K_LEFT:
                 if forca_elastico > 1:
                     forca_elastico -= 1
             elif evento.key == pygame.K_RIGHT:
                 forca_elastico += 1
+            elif evento.key == pygame.K_g:
+                if simulacao_ocorreu and pode_gerar_grafico:
+                        gerar_grafico(lista_tempo, lista_velocidade_carro_1, lista_velocidade_carro_2, 
+                            titulo="Cinemática do Sistema: Velocidade vs. Tempo",
+                            legenda_x="Tempo (s)",
+                            legenda_y="Velocidade (m/s)")
+                        pode_gerar_grafico = False
+                elif simulacao_ocorreu:
+                    pode_gerar_grafico = True
+                    gerar_grafico(lista_tempo, lista_velocidade_carro_1, lista_velocidade_carro_2, 
+                                                titulo="Cinemática do Sistema: Velocidade vs. Tempo",
+                                                legenda_x="Tempo (s)",
+                                                legenda_y="Velocidade (m/s)")
+                    pode_gerar_grafico = False
 
     tela.fill("black")
     for carro in grupo_carros:
@@ -161,12 +202,15 @@ while rodando:
         if simulador_pausado is False:
             grupo_carros.update()
             tempo_decorrido = time.perf_counter() - inicio_simulacao - tempo_decorrido_pause
+            if tempo_decorrido - tempo_ultima_adicao_lista >= intervalo_entre_adicoes_tempo:
+                lista_tempo.append(tempo_decorrido)
+                lista_velocidade_carro_1.append(carro_1.velocidade)
+                lista_velocidade_carro_2.append(carro_2.velocidade * -1)
             if carro_1.rect.colliderect(carro_2.rect):
                 fim_simulacao = time.perf_counter()
                 comecou_simulacao = False
                 simulacao_ocorreu = True
-                #tempo_decorrido = fim_simulacao - inicio_simulacao
-                print(tempo_decorrido)
+            
                 carro_1.reiniciar()
                 carro_2.reiniciar()
 
@@ -182,6 +226,8 @@ while rodando:
 
                 carro_2.rect.x += sobreposicao * proporcao_2
                 carro_2.x = carro_2.rect.x
+
+                pode_gerar_grafico = True
 
     teclas = pygame.key.get_pressed()
 
@@ -199,7 +245,7 @@ while rodando:
                 carro_1.massa -= 1
 
     pygame.display.flip()
-
+    
     clock.tick(30)
 
 pygame.quit()
