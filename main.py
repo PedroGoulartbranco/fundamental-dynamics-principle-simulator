@@ -103,7 +103,7 @@ rect_numero_2_carro = numero_carro_1_surface.get_rect()
 
 lista_tempo = []
 tempo_ultima_adicao_lista = 0
-intervalo_entre_adicoes_tempo = 0.1
+intervalo_entre_adicoes_tempo = 0.01
 lista_velocidade_carro_1 = []
 lista_velocidade_carro_2 = []
 pode_gerar_grafico = False
@@ -216,6 +216,7 @@ while rodando:
                 lista_tempo.append(tempo_decorrido)
                 lista_velocidade_carro_1.append(carro_1.velocidade)
                 lista_velocidade_carro_2.append(carro_2.velocidade * -1)
+                tempo_ultima_adicao_lista = tempo_decorrido
             if carro_1.rect.colliderect(carro_2.rect):
                 fim_simulacao = time.perf_counter()
                 comecou_simulacao = False
