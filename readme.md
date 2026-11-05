@@ -20,6 +20,7 @@ This project is an extra assignment developed for the **Experimental Physics 1**
 | **Shift + Down Arrow** (`Shift + ↓`) | Decrease Car 2 mass |
 | **Spacebar** (`Space`) | Start / Pause simulation |
 | **Enter** (`↵`) | Reset simulation |
+| **G** (`g`) | Generate / Display Matplotlib graph (after experiment) |
 
 ## Requirements
 * Python 3.12
