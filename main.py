@@ -66,8 +66,8 @@ ALTURA_TELA = 600
 
 grupo_carros = pygame.sprite.Group()
 
-massa_1 = 40
-massa_2 = 40
+massa_1 = 0.32
+massa_2 = 0.32
 
 carro_1 = Carro(posicao_x=150, posicao_y=500, massa=massa_1, cor="#5c9feb", lado="esquerdo")
 carro_2 = Carro(posicao_x=790, posicao_y=500, massa=massa_2, cor="#f34949", lado="direito")
@@ -173,16 +173,16 @@ while rodando:
     texto_lateral = [
         f"Tempo Duração: {tempo_decorrido:.2f}s",
         f"Pause: {simulador_pausado}",
-        f"Massa 1: {carro_1.massa:.1f}Kg",
-        f"Massa 2: {carro_2.massa:.1f}Kg",
+        f"Massa 1: {carro_1.massa:.2f}Kg",
+        f"Massa 2: {carro_2.massa:.2f}Kg",
         f"Força Aplicada: {forca_elastico:.1f}N",
-        f"Aceleração 1: {carro_1.acelaracao:.2f}",
-        f"Aceleração 2: {carro_2.acelaracao:.2f}",
+        f"Aceleração 1: {carro_1.acelaracao:.2f} m/s²",
+        f"Aceleração 2: {carro_2.acelaracao:.2f} m/s²",
     ]
 
     texto_lateral_direito = [
-        f"Velocidade 1: {carro_1.velocidade:.2f}",
-        f"Velocidade 2: {carro_2.velocidade:.2f}"
+        f"Velocidade 1: {carro_1.velocidade:.2f}m/s",
+        f"Velocidade 2: {carro_2.velocidade:.2f}m/s"
     ]
 
     for i, linha in enumerate(texto_lateral):
@@ -191,11 +191,11 @@ while rodando:
         tela.blit(texto_surf, texto_rect)
 
     if simulacao_ocorreu:
-        texto_lateral_direito.append(f"Velocidade Final 1: {carro_1.velocidade_final:.2f}")
-        texto_lateral_direito.append(f"Velocidade Final 2: {carro_2.velocidade_final:.2f}")
+        texto_lateral_direito.append(f"Velocidade Final 1: {carro_1.velocidade_final:.2f}m/s")
+        texto_lateral_direito.append(f"Velocidade Final 2: {carro_2.velocidade_final:.2f}m/s")
     for i, linha in enumerate(texto_lateral_direito):
         texto_surf = fonte_lateral.render(linha, True, (255, 255, 255))
-        texto_rect = texto_surf.get_rect(x=750, y=y_texto_inicial+ (i * y_espacamento))
+        texto_rect = texto_surf.get_rect(x=700, y=y_texto_inicial+ (i * y_espacamento))
         tela.blit(texto_surf, texto_rect)
 
     pygame.draw.rect(tela, "white", (0, 535, 1000, 10))
