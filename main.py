@@ -66,8 +66,8 @@ ALTURA_TELA = 600
 
 grupo_carros = pygame.sprite.Group()
 
-massa_1 = 0.32
-massa_2 = 0.32
+massa_1 = 32
+massa_2 = 32
 
 carro_1 = Carro(posicao_x=150, posicao_y=500, massa=massa_1, cor="#5c9feb", lado="esquerdo")
 carro_2 = Carro(posicao_x=790, posicao_y=500, massa=massa_2, cor="#f34949", lado="direito")
@@ -131,6 +131,7 @@ while rodando:
                     comecou_simulacao = False
                     tempo_decorrido = 0
                     tempo_decorrido_pause = 0
+                    tempo_ultima_adicao_lista = 0
 
                     lista_velocidade_carro_1 = []
                     lista_velocidade_carro_2 = []
