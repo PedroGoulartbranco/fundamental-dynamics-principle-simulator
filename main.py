@@ -78,7 +78,7 @@ grupo_carros.add(carro_2)
 forca_elastico = 10
 
 pygame.init()
-pygame.key.set_repeat(300, 150)
+pygame.key.set_repeat(300, 300)
 tela = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA))
 pygame.display.set_caption("Simulador Principio Fundamental da Dinamica")
 clock = pygame.time.Clock()
@@ -155,6 +155,16 @@ while rodando:
                                                 legenda_x="Tempo (s)",
                                                 legenda_y="Velocidade (m/s)")
                     pode_gerar_grafico = False
+            elif evento.key == pygame.K_UP:
+                if (pygame.key.get_mods() & pygame.KMOD_SHIFT) :
+                    carro_2.massa += 1
+                else:
+                    carro_1.massa += 1
+            elif evento.key == pygame.K_DOWN:
+                if (pygame.key.get_mods() & pygame.KMOD_SHIFT) :
+                    carro_2.massa -= 1
+                else:
+                    carro_1.massa -= 1
 
     tela.fill("black")
     for carro in grupo_carros:
@@ -228,21 +238,6 @@ while rodando:
                 carro_2.x = carro_2.rect.x
 
                 pode_gerar_grafico = True
-
-    teclas = pygame.key.get_pressed()
-
-    if teclas[pygame.K_LSHIFT] or teclas[pygame.K_RSHIFT]:
-        if teclas[pygame.K_UP]:
-            carro_2.massa += 1
-        if teclas[pygame.K_DOWN]:
-            if carro_2.massa > 1:
-                carro_2.massa -= 1
-    else:
-        if teclas[pygame.K_UP]:
-            carro_1.massa += 1
-        if teclas[pygame.K_DOWN]:
-            if carro_1.massa > 1:
-                carro_1.massa -= 1
 
     pygame.display.flip()
     
