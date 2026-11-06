@@ -75,7 +75,7 @@ def gerar_grafico(lista_x, lista_y_1, lista_y_2, titulo, legenda_x, legenda_y, m
 
     plt.legend(loc="upper right")
     plt.grid(True)
-    plt.savefig("grafico_velocidade1.png", dpi=300, bbox_inches="tight")
+    #plt.savefig("grafico_velocidade1.png", dpi=300, bbox_inches="tight")
     plt.show()
 
 def reiniciar_simulacao(carro_1, carro_2, simulacao_ocorreu, comecou_simulacao, tempo_decorrido,  tempo_decorrido_pause, tempo_ultima_adicao_lista, lista_velocidade_carro_1, lista_velocidade_carro_2, lista_tempo):
@@ -182,6 +182,7 @@ while rodando:
                 forca_elastico += 1
             elif evento.key == pygame.K_g:
                 if simulacao_ocorreu and pode_gerar_grafico:
+                        pode_gerar_grafico = False
                         gerar_grafico(lista_tempo, lista_velocidade_carro_1, lista_velocidade_carro_2, 
                             titulo="Gráfico 1: Velocidade vs. Tempo",
                             legenda_x="Tempo (s)",
@@ -189,17 +190,16 @@ while rodando:
                             massa_1=carro_1.massa,
                             massa_2=carro_2.massa,
                             forca=forca_elastico)
-                        pode_gerar_grafico = False
-                elif simulacao_ocorreu:
-                    pode_gerar_grafico = True
-                    gerar_grafico(lista_tempo, lista_velocidade_carro_1, lista_velocidade_carro_2, 
-                                                titulo="Gráfico 1: Velocidade vs. Tempo",
-                                                legenda_x="Tempo (s)",
-                                                legenda_y="Velocidade (m/s)",
-                                                massa_1=carro_1.massa,
-                                                massa_2=carro_2.massa,
-                                                forca=forca_elastico)
-                    pode_gerar_grafico = False
+                # elif simulacao_ocorreu:
+                #     pode_gerar_grafico = True
+                #     gerar_grafico(lista_tempo, lista_velocidade_carro_1, lista_velocidade_carro_2, 
+                #                                 titulo="Gráfico 1: Velocidade vs. Tempo",
+                #                                 legenda_x="Tempo (s)",
+                #                                 legenda_y="Velocidade (m/s)",
+                #                                 massa_1=carro_1.massa,
+                #                                 massa_2=carro_2.massa,
+                #                                 forca=forca_elastico)
+                #     pode_gerar_grafico = False
             elif evento.key == pygame.K_UP:
                 if (pygame.key.get_mods() & pygame.KMOD_SHIFT) :
                     carro_2.massa += 1
