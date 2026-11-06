@@ -1,5 +1,4 @@
 import pygame
-import time
 import matplotlib.pyplot as plt
 
 PIXEL_POR_METRO = 100
@@ -141,13 +140,8 @@ while rodando:
             if evento.key == pygame.K_SPACE:
                 if comecou_simulacao is False and simulacao_ocorreu is False:
                     comecou_simulacao =  not comecou_simulacao
-                    inicio_simulacao = time.perf_counter()
                 elif comecou_simulacao is True and simulacao_ocorreu is False:
                     simulador_pausado = not simulador_pausado
-                    if simulador_pausado:
-                        inicio_tempo_pause = time.perf_counter()
-                    else:
-                        tempo_decorrido_pause = time.perf_counter() - inicio_tempo_pause
             elif evento.key == pygame.K_RETURN:
                 if simulacao_ocorreu:
                     carro_1.realocar()
@@ -250,14 +244,13 @@ while rodando:
             distancia_carrinhos = calcular_distancia()
             if distancia_carrinhos < 0:
                 distancia_carrinhos = 0
-            tempo_decorrido = time.perf_counter() - inicio_simulacao - tempo_decorrido_pause
+            tempo_decorrido += dt
             if tempo_decorrido - tempo_ultima_adicao_lista >= intervalo_entre_adicoes_tempo:
                 lista_tempo.append(tempo_decorrido)
                 lista_velocidade_carro_1.append(carro_1.velocidade)
                 lista_velocidade_carro_2.append(carro_2.velocidade * -1)
                 tempo_ultima_adicao_lista = tempo_decorrido
             if carro_1.rect.colliderect(carro_2.rect):
-                fim_simulacao = time.perf_counter()
                 comecou_simulacao = False
                 simulacao_ocorreu = True
             
