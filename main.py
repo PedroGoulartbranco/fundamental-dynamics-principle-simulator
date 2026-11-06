@@ -9,7 +9,7 @@ class Carro(pygame.sprite.Sprite):
         self.x = (posicao_x / PIXEL_POR_METRO)
         self.y = posicao_y
 
-        self.posicao_inicial_x = int(posicao_x / PIXEL_POR_METRO)
+        self.posicao_inicial_x = (posicao_x / PIXEL_POR_METRO)
         self.posicao_inicial_y = posicao_y
 
         self.massa = massa
@@ -45,7 +45,7 @@ class Carro(pygame.sprite.Sprite):
         self.x = self.posicao_inicial_x
         self.y = self.posicao_inicial_y
 
-        self.rect.x = (self.x * 100)
+        self.rect.x = (self.x * PIXEL_POR_METRO)
         self.rect.y = self.y
 
 def gerar_grafico(lista_x, lista_y_1, lista_y_2, titulo, legenda_x, legenda_y, massa_1, massa_2, forca):
@@ -77,6 +77,21 @@ def gerar_grafico(lista_x, lista_y_1, lista_y_2, titulo, legenda_x, legenda_y, m
     plt.grid(True)
     plt.savefig("grafico_velocidade1.png", dpi=300, bbox_inches="tight")
     plt.show()
+
+def reiniciar_simulacao(carro_1, carro_2, simulacao_ocorreu, comecou_simulacao, tempo_decorrido,  tempo_decorrido_pause, tempo_ultima_adicao_lista, lista_velocidade_carro_1, lista_velocidade_carro_2, lista_tempo):
+    carro_1.realocar()
+    carro_2.realocar()
+    simulacao_ocorreu = False
+    comecou_simulacao = False
+    tempo_decorrido = 0
+    tempo_decorrido_pause = 0
+    tempo_ultima_adicao_lista = 0
+    
+    lista_velocidade_carro_1 = []
+    lista_velocidade_carro_2 = []
+    lista_tempo = []
+
+    return simulacao_ocorreu, comecou_simulacao, tempo_decorrido,  tempo_decorrido_pause, tempo_ultima_adicao_lista, lista_velocidade_carro_1, lista_velocidade_carro_2, lista_tempo
 
 LARGURA_TELA = 1000
 ALTURA_TELA = 600
@@ -157,7 +172,9 @@ while rodando:
                     lista_tempo = []
 
                     distancia_carrinhos = calcular_distancia()
-
+                elif simulador_pausado:
+                    simulacao_ocorreu, comecou_simulacao, tempo_decorrido,  tempo_decorrido_pause, tempo_ultima_adicao_lista, lista_velocidade_carro_1, lista_velocidade_carro_2, lista_tempo = reiniciar_simulacao(carro_1, carro_2, simulacao_ocorreu, comecou_simulacao, tempo_decorrido,  tempo_decorrido_pause, tempo_ultima_adicao_lista, lista_velocidade_carro_1, lista_velocidade_carro_2, lista_tempo)
+                    simulador_pausado = False
             elif evento.key == pygame.K_LEFT:
                 if forca_elastico > 1:
                     forca_elastico -= 1
