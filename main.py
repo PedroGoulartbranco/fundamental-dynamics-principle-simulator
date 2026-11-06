@@ -2,13 +2,15 @@ import pygame
 import time
 import matplotlib.pyplot as plt
 
+PIXEL_POR_METRO = 100
+
 class Carro(pygame.sprite.Sprite):
     def __init__(self, posicao_x, posicao_y, massa, cor, lado):
         super().__init__()
-        self.x = posicao_x
+        self.x = (posicao_x / PIXEL_POR_METRO)
         self.y = posicao_y
 
-        self.posicao_inicial_x = posicao_x
+        self.posicao_inicial_x = int(posicao_x / PIXEL_POR_METRO)
         self.posicao_inicial_y = posicao_y
 
         self.massa = massa
@@ -22,20 +24,20 @@ class Carro(pygame.sprite.Sprite):
 
         self.image = pygame.Surface((self.comprimento, self.altura))
         self.image.fill(cor)
-        self.rect = self.image.get_rect(topleft=(self.x, self.y))
+        self.rect = self.image.get_rect(topleft=(self.x * 100, self.y))
 
         self.velocidade_final = 0
 
     def calcular_acelaracao(self, forca):
-        self.acelaracao = forca / self.massa
-    def update(self):
+        self.acelaracao = (forca / self.massa)
+    def update(self, dt):
         if self.lado == "esquerdo":
-            self.velocidade += self.acelaracao
+            self.velocidade += self.acelaracao * dt
         else:
-            self.velocidade -= self.acelaracao
-        self.x += self.velocidade
+            self.velocidade -= self.acelaracao * dt
+        self.x += self.velocidade * dt
 
-        self.rect.x = self.x
+        self.rect.x = int(self.x * PIXEL_POR_METRO)
     def reiniciar(self):
         self.velocidade_final = self.velocidade
         self.velocidade = 0
@@ -44,22 +46,38 @@ class Carro(pygame.sprite.Sprite):
         self.x = self.posicao_inicial_x
         self.y = self.posicao_inicial_y
 
-        self.rect.x = self.x
+        self.rect.x = (self.x * 100)
         self.rect.y = self.y
 
-def gerar_grafico(lista_x, lista_y_1, lista_y_2, titulo, legenda_x, legenda_y):
+def gerar_grafico(lista_x, lista_y_1, lista_y_2, titulo, legenda_x, legenda_y, massa_1, massa_2, forca):
     plt.figure(figsize=(8, 5))
+
     plt.plot(lista_x, lista_y_1, label="Carro 1", color="blue")
     plt.plot(lista_x, lista_y_2, label="Carro 2", color="red")
 
     plt.title(titulo)
     plt.xlabel(legenda_x)
     plt.ylabel(legenda_y)
-    plt.legend()
-    plt.grid(True)
-    plt.show()
 
-    print("aqui")
+    info_texto = (
+        f"Parâmetros:\n• Força ($F$): {forca} N\n• Massa 1 ($m_1$):"
+        f" {massa_1} kg\n• Massa 2 ($m_2$): {massa_2} kg"
+    )
+
+    plt.gca().text(
+        0.03,
+        0.65,
+        info_texto,
+        transform=plt.gca().transAxes,
+        fontsize=10,
+        verticalalignment="top",
+        bbox=dict(boxstyle="round,pad=0.5", facecolor="white", edgecolor="gray", alpha=0.9),
+    )
+
+    plt.legend(loc="upper right")
+    plt.grid(True)
+    plt.savefig("grafico_velocidade1.png", dpi=300, bbox_inches="tight")
+    plt.show()
 
 LARGURA_TELA = 1000
 ALTURA_TELA = 600
@@ -78,7 +96,8 @@ grupo_carros.add(carro_2)
 forca_elastico = 10
 
 pygame.init()
-pygame.key.set_repeat(300, 300)
+clock = pygame.time.Clock()
+pygame.key.set_repeat(300, 150)
 tela = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA))
 pygame.display.set_caption("Simulador Principio Fundamental da Dinamica")
 clock = pygame.time.Clock()
@@ -107,6 +126,12 @@ intervalo_entre_adicoes_tempo = 0.01
 lista_velocidade_carro_1 = []
 lista_velocidade_carro_2 = []
 pode_gerar_grafico = False
+
+dt = 0 
+
+def calcular_distancia():
+    return (carro_2.rect.left - carro_1.rect.right) / PIXEL_POR_METRO
+distancia_carrinhos = calcular_distancia()
 
 while rodando:
     for evento in pygame.event.get():
@@ -137,6 +162,8 @@ while rodando:
                     lista_velocidade_carro_2 = []
                     lista_tempo = []
 
+                    distancia_carrinhos = calcular_distancia()
+
             elif evento.key == pygame.K_LEFT:
                 if forca_elastico > 1:
                     forca_elastico -= 1
@@ -145,16 +172,22 @@ while rodando:
             elif evento.key == pygame.K_g:
                 if simulacao_ocorreu and pode_gerar_grafico:
                         gerar_grafico(lista_tempo, lista_velocidade_carro_1, lista_velocidade_carro_2, 
-                            titulo="Cinemática do Sistema: Velocidade vs. Tempo",
+                            titulo="Gráfico 1: Velocidade vs. Tempo",
                             legenda_x="Tempo (s)",
-                            legenda_y="Velocidade (m/s)")
+                            legenda_y="Velocidade (m/s)",
+                            massa_1=carro_1.massa,
+                            massa_2=carro_2.massa,
+                            forca=forca_elastico)
                         pode_gerar_grafico = False
                 elif simulacao_ocorreu:
                     pode_gerar_grafico = True
                     gerar_grafico(lista_tempo, lista_velocidade_carro_1, lista_velocidade_carro_2, 
-                                                titulo="Cinemática do Sistema: Velocidade vs. Tempo",
+                                                titulo="Gráfico 1: Velocidade vs. Tempo",
                                                 legenda_x="Tempo (s)",
-                                                legenda_y="Velocidade (m/s)")
+                                                legenda_y="Velocidade (m/s)",
+                                                massa_1=carro_1.massa,
+                                                massa_2=carro_2.massa,
+                                                forca=forca_elastico)
                     pode_gerar_grafico = False
             elif evento.key == pygame.K_UP:
                 if (pygame.key.get_mods() & pygame.KMOD_SHIFT) :
@@ -166,6 +199,7 @@ while rodando:
                     carro_2.massa -= 1
                 else:
                     carro_1.massa -= 1
+    dt = clock.tick(60) / 1000.0
 
     tela.fill("black")
     for carro in grupo_carros:
@@ -182,6 +216,7 @@ while rodando:
     ]
 
     texto_lateral_direito = [
+        f"Distância: {distancia_carrinhos:.2f}m",
         f"Velocidade 1: {carro_1.velocidade:.2f}m/s",
         f"Velocidade 2: {carro_2.velocidade:.2f}m/s"
     ]
@@ -211,7 +246,10 @@ while rodando:
 
     if comecou_simulacao:
         if simulador_pausado is False:
-            grupo_carros.update()
+            grupo_carros.update(dt)
+            distancia_carrinhos = calcular_distancia()
+            if distancia_carrinhos < 0:
+                distancia_carrinhos = 0
             tempo_decorrido = time.perf_counter() - inicio_simulacao - tempo_decorrido_pause
             if tempo_decorrido - tempo_ultima_adicao_lista >= intervalo_entre_adicoes_tempo:
                 lista_tempo.append(tempo_decorrido)
@@ -242,7 +280,5 @@ while rodando:
                 pode_gerar_grafico = True
 
     pygame.display.flip()
-    
-    clock.tick(30)
 
 pygame.quit()
