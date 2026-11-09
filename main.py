@@ -190,16 +190,6 @@ while rodando:
                             massa_1=carro_1.massa,
                             massa_2=carro_2.massa,
                             forca=forca_elastico)
-                # elif simulacao_ocorreu:
-                #     pode_gerar_grafico = True
-                #     gerar_grafico(lista_tempo, lista_velocidade_carro_1, lista_velocidade_carro_2, 
-                #                                 titulo="Gráfico 1: Velocidade vs. Tempo",
-                #                                 legenda_x="Tempo (s)",
-                #                                 legenda_y="Velocidade (m/s)",
-                #                                 massa_1=carro_1.massa,
-                #                                 massa_2=carro_2.massa,
-                #                                 forca=forca_elastico)
-                #     pode_gerar_grafico = False
             elif evento.key == pygame.K_UP:
                 if (pygame.key.get_mods() & pygame.KMOD_SHIFT) :
                     carro_2.massa += 1
@@ -217,7 +207,7 @@ while rodando:
         carro.calcular_acelaracao(forca_elastico)
 
     texto_lateral = [
-        f"Tempo Duração: {tempo_decorrido:.2f}s",
+        f"Tempo Duração: {tempo_decorrido:.3f}s",
         f"Pause: {simulador_pausado}",
         f"Massa 1: {carro_1.massa:.2f}Kg",
         f"Massa 2: {carro_2.massa:.2f}Kg",
